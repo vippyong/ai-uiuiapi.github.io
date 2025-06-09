@@ -1,46 +1,1891 @@
----
-layout: page
-description: "「离开世界之前 一切都是过程」"
----
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="AI API, GPT-4, Claude, Gemini, 人工智能接口, 大语言模型, LLM, 统一API, AI开发, API网关, 价格优惠, OpenAI替代">
+    <meta name="description" content="UIUI API是下一代AI模型统一网关，通过单一接口访问GPT-4、Claude、Gemini等15+顶级AI模型，简化开发流程，提供透明定价，官方价格65.6%的优惠，告别繁琐的多平台管理。">
+    <title>UIUI API - 下一代AI模型统一网关</title>
+    <style>
+        /* 全局变量 */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a78bfa;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
 
-{% for post in paginator.posts %}
-<div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-        <h2 class="post-title">
-            {{ post.title }}
-        </h2>
-        {% if post.subtitle %}
-        <h3 class="post-subtitle">
-            {{ post.subtitle }}
-        </h3>
-        {% endif %}
-        <div class="post-content-preview">
-            {% if post.lang == 'en' %}
-                {{ post.content | strip_html | truncate:300 }}
-            {% else %}
-                {{ post.content | strip_html | truncate:200 }}
-            {% endif %}
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* 噪点纹理背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: -1;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(0,0,0,.05) 35px, rgba(0,0,0,.05) 70px);
+        }
+
+        /* 加载屏幕 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .loader-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid var(--light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom-color: var(--light);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .nav-logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 10px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--dark);
+            transition: all 0.3s ease;
+        }
+
+        /* Hero区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 20px 80px;
+            position: relative;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -100px;
+            right: -100px;
+        }
+
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            bottom: -50px;
+            left: -50px;
+            animation-delay: -5s;
+        }
+
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(-30px, -10px) scale(1.05); }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content {
+            animation: slideInLeft 1s ease;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--light);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .hero-badge .badge-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 12px;
+        }
+
+        .hero-title {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--gray);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--white);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: var(--primary);
+        }
+
+        .hero-visual {
+            position: relative;
+            animation: slideInRight 1s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .code-window {
+            background: var(--dark);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transform: perspective(1000px) rotateY(-10deg);
+            transition: transform 0.3s ease;
+        }
+
+        .code-window:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
+        .code-header {
+            background: var(--dark-light);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f57;
+        }
+
+        .code-dot:nth-child(2) { background: #ffbd2e; }
+        .code-dot:nth-child(3) { background: #28ca42; }
+
+        .code-content {
+            padding: 20px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e4e4e7;
+        }
+
+        .code-line {
+            margin: 4px 0;
+            opacity: 0;
+            animation: codeFadeIn 0.5s ease forwards;
+        }
+
+        .code-line:nth-child(1) { animation-delay: 0.1s; }
+        .code-line:nth-child(2) { animation-delay: 0.2s; }
+        .code-line:nth-child(3) { animation-delay: 0.3s; }
+        .code-line:nth-child(4) { animation-delay: 0.4s; }
+        .code-line:nth-child(5) { animation-delay: 0.5s; }
+        .code-line:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes codeFadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .code-keyword { color: #c792ea; }
+        .code-string { color: #c3e88d; }
+        .code-function { color: #82aaff; }
+        .code-comment { color: #546e7a; }
+
+        /* 特性展示 */
+        .features {
+            padding: 100px 20px;
+            background: #fafbfc;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(32px, 4vw, 42px);
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+
+        .section-desc {
+            font-size: 18px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .feature-desc {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* 统计数据 */
+        .stats {
+            padding: 80px 20px;
+            background: var(--gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .stats-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            color: var(--white);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* 代码示例 */
+        .examples {
+            padding: 100px 20px;
+            background: var(--white);
+        }
+
+        .examples-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .example-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .example-tab {
+            padding: 12px 24px;
+            background: var(--light);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--gray);
+        }
+
+        .example-tab.active {
+            background: var(--gradient);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .example-content {
+            background: var(--dark);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .example-header {
+            background: var(--dark-light);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .example-title {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .example-code {
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        pre {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #e4e4e7;
+            white-space: pre-wrap;
+        }
+
+        /* 定价 */
+        .pricing {
+            padding: 100px 20px;
+            background: #fafbfc;
+        }
+
+        .pricing-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            align-items: start;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.15);
+            border: 2px solid var(--primary);
+        }
+
+        .pricing-card.featured::before {
+            content: '最受欢迎';
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient);
+            color: var(--white);
+            padding: 4px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .pricing-price sup {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .pricing-desc {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .pricing-btn {
+            width: 100%;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: 2px solid var(--light);
+            color: var(--primary);
+            background: var(--white);
+        }
+
+        .pricing-card.featured .pricing-btn {
+            background: var(--gradient);
+            color: var(--white);
+            border-color: transparent;
+        }
+
+        .pricing-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        /* FAQ */
+        .faq {
+            padding: 100px 20px;
+            background: var(--white);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--light);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question {
+            padding: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+        }
+
+        .faq-answer p {
+            padding: 0 24px 24px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 100px 20px;
+            background: var(--gradient);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: clamp(32px, 4vw, 42px);
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+
+        .cta-desc {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 16px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .cta-btn-primary {
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 页脚 */
+        .footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 60px 20px 30px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand h3 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .footer-column h4 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-bottom a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-bottom a:hover {
+            color: var(--white);
+        }
+
+        /* 返回顶部 */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .nav-toggle {
+                display: flex;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: var(--white);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-visual {
+                margin-top: 40px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载屏幕 -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <div class="loader-circle"></div>
+            </div>
+            <h3>UIUI API</h3>
         </div>
-    </a>
-    <p class="post-meta">
-        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
-    </p>
-</div>
-<hr>
-{% endfor %}
+    </div>
 
-<!-- Pager -->
-{% if paginator.total_pages > 1 %}
-<ul class="pager">
-    {% if paginator.previous_page %}
-    <li class="previous">
-        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
-    </li>
-    {% endif %}
-    {% if paginator.next_page %}
-    <li class="next">
-        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
-    </li>
-    {% endif %}
-</ul>
-{% endif %}
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">UIUI API</a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#features" class="nav-link">功能特性</a></li>
+                <li><a href="#pricing" class="nav-link">定价方案</a></li>
+                <li><a href="#docs" class="nav-link">文档</a></li>
+                <li><a href="#faq" class="nav-link">常见问题</a></li>
+                <li><a href="https://uiuiapi.com/console" class="nav-cta">控制台</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <div class="badge-icon">🚀</div>
+                    <span>全新升级 v2.0</span>
+                </div>
+                <h1 class="hero-title">一个API，连接所有AI模型</h1>
+                <p class="hero-subtitle">UIUI API是下一代AI模型统一网关，让您通过单一接口访问GPT-4、Claude、Gemini等15+顶级AI模型，告别繁琐的多平台管理。</p>
+                <div class="hero-buttons">
+                    <a href="https://uiuiapi.com/register" class="btn btn-primary">
+                        免费试用 <span>→</span>
+                    </a>
+                    <a href="#examples" class="btn btn-secondary">
+                        查看示例
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="code-dot"></div>
+                        <div class="code-dot"></div>
+                        <div class="code-dot"></div>
+                    </div>
+                    <div class="code-content">
+                        <div class="code-line">
+                            <span class="code-comment">// 一行代码调用任意AI模型</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> <span class="code-function">uiui</span>.<span class="code-function">chat</span>({
+                        </div>
+                        <div class="code-line">
+                            &nbsp;&nbsp;model: <span class="code-string">"gpt-4"</span>,
+                        </div>
+                        <div class="code-line">
+                            &nbsp;&nbsp;messages: [{ role: <span class="code-string">"user"</span>, content: <span class="code-string">"Hello!"</span> }]
+                        </div>
+                        <div class="code-line">
+                            });
+                        </div>
+                        <div class="code-line">
+                            <span class="code-comment">// 轻松切换到其他模型</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特性展示 -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <span class="section-tag">核心优势</span>
+            <h2 class="section-title">为什么选择UIUI API？</h2>
+            <p class="section-desc">我们提供最简单、最强大的方式来使用AI模型</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">统一接口</h3>
+                <p class="feature-desc">一套API即可访问所有主流AI模型，无需学习不同平台的接口规范，大幅降低开发成本。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">极速响应</h3>
+                <p class="feature-desc">全球多节点部署，智能路由选择最优线路，平均响应时间低于100ms，为您的应用提供极致体验。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3 class="feature-title">按需付费</h3>
+                <p class="feature-desc">透明的定价策略，只为实际使用付费。无需预付大额费用，让AI应用的成本完全可控。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">企业级安全</h3>
+                <p class="feature-desc">端到端加密传输，符合SOC2标准，确保您的数据安全。支持私有化部署满足合规需求。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">实时监控</h3>
+                <p class="feature-desc">详细的使用分析和成本监控，帮助您优化AI应用性能，实时掌握每一分钱的去向。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛠️</div>
+                <h3 class="feature-title">开发者友好</h3>
+                <p class="feature-desc">完善的文档、多语言SDK、丰富的示例代码，让您在5分钟内完成接入，专注业务创新。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 统计数据 -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number"><span data-count="50000">0</span>+</div>
+                <div class="stat-label">活跃开发者</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><span data-count="10">0</span>M+</div>
+                <div class="stat-label">月均API调用</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><span data-count="99.9">0</span>%</div>
+                <div class="stat-label">服务可用性</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><span data-count="15">0</span>+</div>
+                <div class="stat-label">支持模型数</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 代码示例 -->
+    <section class="examples" id="examples">
+        <div class="examples-container">
+            <div class="section-header">
+                <span class="section-tag">快速上手</span>
+                <h2 class="section-title">简单到令人惊叹</h2>
+                <p class="section-desc">无论您使用什么编程语言，都能轻松接入</p>
+            </div>
+            <div class="example-tabs">
+                <button class="example-tab active" data-lang="javascript">JavaScript</button>
+                <button class="example-tab" data-lang="python">Python</button>
+                <button class="example-tab" data-lang="java">Java</button>
+                <button class="example-tab" data-lang="curl">cURL</button>
+            </div>
+            <div class="example-content" id="codeExample">
+                <div class="example-header">
+                    <span class="example-title">JavaScript 示例</span>
+                    <button class="copy-btn">复制代码</button>
+                </div>
+                <div class="example-code">
+                    <pre><code><span class="code-comment">// 安装SDK</span>
+<span class="code-comment">// npm install openai</span>
+
+<span class="code-keyword">import</span> OpenAI <span class="code-keyword">from</span> <span class="code-string">'openai'</span>;
+
+<span class="code-comment">// 初始化客户端</span>
+<span class="code-keyword">const</span> openai = <span class="code-keyword">new</span> <span class="code-function">OpenAI</span>({
+    apiKey: <span class="code-string">process.env.OPENAI_API_KEY</span>,
+    baseURL: <span class="code-string">'https://api.uiuiapi.com/v1'</span> <span class="code-comment">// 使用我们的API地址</span>
+});
+
+<span class="code-comment">// 调用GPT-4</span>
+<span class="code-keyword">const</span> gptResponse = <span class="code-keyword">await</span> openai.chat.completions.<span class="code-function">create</span>({
+    model: <span class="code-string">'gpt-4'</span>,
+    messages: [{ role: <span class="code-string">'user'</span>, content: <span class="code-string">'解释量子计算'</span> }]
+});
+
+<span class="code-comment">// 无缝切换到Claude</span>
+<span class="code-keyword">const</span> claudeResponse = <span class="code-keyword">await</span> openai.chat.completions.<span class="code-function">create</span>({
+    model: <span class="code-string">'claude-3-sonnet'</span>,
+    messages: [{ role: <span class="code-string">'user'</span>, content: <span class="code-string">'写一首诗'</span> }]
+});</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 定价方案 -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <span class="section-tag">价格说明</span>
+            <h2 class="section-title">怎么得出我们的价格为官方的65.6%</h2>
+            <p class="section-desc">透明定价，无隐藏费用</p>
+        </div>
+        <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 30px;">
+            <!-- 步骤流程图 -->
+            <div style="flex: 1; min-width: 320px;">
+                <div style="background: var(--white); border-radius: 16px; padding: 40px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); margin-bottom: 30px;">
+                    <h3 style="text-align: center; color: var(--primary); font-size: 22px; margin-bottom: 30px;">价格计算步骤</h3>
+                    <div style="display: flex; flex-direction: column; gap: 25px;">
+                        <div style="display: flex; align-items: flex-start; gap: 15px;">
+                            <div style="min-width: 40px; height: 40px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--white);">1</div>
+                            <div>
+                                <h4 style="margin-bottom: 8px; color: var(--dark); font-size: 18px;">官方API按美元计费</h4>
+                                <p style="color: var(--gray);">OpenAI官方GPT-4o价格: $1/1K tokens</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 15px;">
+                            <div style="min-width: 40px; height: 40px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--white);">2</div>
+                            <div>
+                                <h4 style="margin-bottom: 8px; color: var(--dark); font-size: 18px;">我们提供优惠汇率</h4>
+                                <p style="color: var(--gray);">3.39人民币 = 1美元</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 15px;">
+                            <div style="min-width: 40px; height: 40px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--white);">3</div>
+                            <div>
+                                <h4 style="margin-bottom: 8px; color: var(--dark); font-size: 18px;">价格折扣力度</h4>
+                                <p style="color: var(--gray);">相当于官方价格的65.6%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 举例说明 -->
+                <div style="background: var(--white); border-radius: 16px; padding: 40px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);">
+                    <h3 style="text-align: center; color: var(--primary); font-size: 22px; margin-bottom: 30px;">举例说明</h3>
+                    <ul style="list-style: none; margin-bottom: 0;">
+                        <li style="padding: 12px 0; color: var(--gray); display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">✓</span>
+                            <span>官方GPT-4o价格：$1/1K tokens</span>
+                        </li>
+                        <li style="padding: 12px 0; color: var(--gray); display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">✓</span>
+                            <span>我们的GPT-4o价格：$0.46/1K tokens</span>
+                        </li>
+                        <li style="padding: 12px 0; color: var(--gray); display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">✓</span>
+                            <span>充值339元人民币即可获得$100美元的使用额度</span>
+                        </li>
+                        <li style="padding: 12px 0; color: var(--gray); display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">✓</span>
+                            <span>相比官方汇率节省65.6%以上的成本（官方7/1美元充值价需要花费700元人民币）</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 特别说明 -->
+            <div style="flex: 1; min-width: 320px;">
+                <div style="background: var(--white); border-radius: 16px; padding: 40px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); height: 100%;">
+                    <h3 style="text-align: center; color: var(--primary); font-size: 22px; margin-bottom: 30px;">特别说明</h3>
+                    <p style="color: var(--gray); margin-bottom: 20px; line-height: 1.8;">我们完全保持与官方一致的计费标准，只是通过提供优惠的人民币兑美元汇率来实现折扣。</p>
+                    <p style="color: var(--gray); margin-bottom: 30px; line-height: 1.8;">用户在API使用过程中，计费模式与直接使用官方API完全一致。</p>
+                    <div style="background: rgba(99, 102, 241, 0.05); padding: 25px; border-radius: 12px; border-left: 4px solid var(--primary); margin-bottom: 30px;">
+                        <h4 style="color: var(--dark); margin-bottom: 10px; font-size: 18px;">透明价格承诺</h4>
+                        <p style="color: var(--gray); line-height: 1.8; margin-bottom: 0;">我们承诺提供市场上最透明的价格体系，无隐藏费用，按需付费，让每一分投入都用在刀刃上。</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <a href="https://uiuiapi.com/pricing" class="pricing-btn" style="background: var(--gradient); color: var(--white); border: none; width: auto; display: inline-block;">查看完整价格表</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="faq-container">
+            <div class="section-header">
+                <span class="section-tag">FAQ</span>
+                <h2 class="section-title">常见问题解答</h2>
+                <p class="section-desc">我们整理了用户最关心的问题</p>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>UIUI API支持哪些AI模型？</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>我们支持市面上主流的AI模型，包括OpenAI的GPT-4、GPT-3.5，Anthropic的Claude 3系列，Google的Gemini Pro，以及Midjourney、Stable Diffusion等图像生成模型。我们会持续添加新模型，确保您始终能使用最先进的AI技术。</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>如何保证API的稳定性？</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>我们采用多云架构，在全球部署了多个节点，通过智能路由和负载均衡确保服务的高可用性。我们承诺99.9%的服务可用性，并为企业客户提供SLA保障。您可以在状态页面实时查看各项服务的运行状态。</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>价格是否包含原始模型的费用？</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>是的，我们的价格已经包含了原始模型的使用费用。您只需要向UIUI API付费，无需分别向各个AI平台付费。我们通过规模化采购为您争取到了更优惠的价格。</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>是否支持自定义模型或私有部署？</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>企业版客户可以选择私有化部署方案，我们提供完整的部署文档和技术支持。同时，我们也支持接入您的自定义模型，让您能够在统一的接口下管理所有AI资源。</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>如何从其他平台迁移到UIUI API？</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>迁移非常简单！我们的API设计兼容OpenAI的接口规范，大多数情况下您只需要更改API端点和密钥即可。我们还提供了详细的迁移指南和技术支持，确保您能够平滑过渡。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2 class="cta-title">准备好革新您的AI应用了吗？</h2>
+            <p class="cta-desc">立即开始，获得10元免费额度，无需信用卡</p>
+            <div class="cta-buttons">
+                <a href="https://uiuiapi.com/register" class="cta-btn cta-btn-primary">免费开始</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>UIUI API</h3>
+                <p>下一代AI模型统一网关，让AI集成变得简单、高效、可靠。</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">𝕏</a>
+                    <a href="#" class="social-link">📧</a>
+                    <a href="#" class="social-link">💬</a>
+                    <a href="#" class="social-link">📱</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>产品</h4>
+                <ul class="footer-links">
+                    <li><a href="#features">功能特性</a></li>
+                    <li><a href="#pricing">定价方案</a></li>
+                    <li><a href="https://uiuiapi.com/models">支持模型</a></li>
+                    <li><a href="https://uiuiapi.com/changelog">更新日志</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>开发者</h4>
+                <ul class="footer-links">
+                    <li><a href="https://uiuiapi.com/docs">API文档</a></li>
+                    <li><a href="https://uiuiapi.com/sdk">SDK下载</a></li>
+                    <li><a href="https://uiuiapi.com/examples">代码示例</a></li>
+                    <li><a href="https://uiuiapi.com/status">服务状态</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>公司</h4>
+                <ul class="footer-links">
+                    <li><a href="https://uiuiapi.com/about">关于我们</a></li>
+                    <li><a href="https://uiuiapi.com/blog">技术博客</a></li>
+                    <li><a href="https://uiuiapi.com/careers">加入我们</a></li>
+                    <li><a href="https://uiuiapi.com/contact">联系我们</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 UIUI API. All rights reserved.</p>
+            <div>
+                <a href="https://uiuiapi.com/privacy">隐私政策</a>
+                <a href="https://uiuiapi.com/terms">服务条款</a>
+                <a href="https://uiuiapi.com/security">安全中心</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部 -->
+    <div class="scroll-top" id="scrollTop">↑</div>
+
+    <script>
+        // 加载动画
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('fade-out');
+            }, 800);
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // 返回顶部按钮
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.scrollY > 300) {
+                scrollTop.classList.add('show');
+            } else {
+                scrollTop.classList.remove('show');
+            }
+        });
+
+        // 移动端菜单
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    navMenu.classList.remove('active');
+                }
+            });
+        });
+
+        // 返回顶部
+        document.getElementById('scrollTop').addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 数字动画
+        const animateNumber = (element, target, duration = 2000) => {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                if (element.getAttribute('data-count').includes('.')) {
+                    element.textContent = current.toFixed(1);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        };
+
+        // 统计数字观察器
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const numbers = entry.target.querySelectorAll('[data-count]');
+                    numbers.forEach(num => {
+                        const target = parseFloat(num.getAttribute('data-count'));
+                        animateNumber(num, target);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // FAQ折叠
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                document.querySelectorAll('.faq-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // 代码示例切换
+        const codeExamples = {
+            javascript: {
+                title: 'JavaScript 示例',
+                code: `<span class="code-comment">// 安装SDK</span>
+<span class="code-comment">// npm install openai</span>
+
+<span class="code-keyword">import</span> OpenAI <span class="code-keyword">from</span> <span class="code-string">'openai'</span>;
+
+<span class="code-comment">// 初始化客户端</span>
+<span class="code-keyword">const</span> openai = <span class="code-keyword">new</span> <span class="code-function">OpenAI</span>({
+    apiKey: <span class="code-string">process.env.OPENAI_API_KEY</span>,
+    baseURL: <span class="code-string">'https://api.uiuiapi.com/v1'</span> <span class="code-comment">// 使用我们的API地址</span>
+});
+
+<span class="code-comment">// 调用GPT-4</span>
+<span class="code-keyword">const</span> gptResponse = <span class="code-keyword">await</span> openai.chat.completions.<span class="code-function">create</span>({
+    model: <span class="code-string">'gpt-4'</span>,
+    messages: [{ role: <span class="code-string">'user'</span>, content: <span class="code-string">'解释量子计算'</span> }]
+});
+
+<span class="code-comment">// 无缝切换到Claude</span>
+<span class="code-keyword">const</span> claudeResponse = <span class="code-keyword">await</span> openai.chat.completions.<span class="code-function">create</span>({
+    model: <span class="code-string">'claude-3-sonnet'</span>,
+    messages: [{ role: <span class="code-string">'user'</span>, content: <span class="code-string">'写一首诗'</span> }]
+});`
+            },
+            python: {
+                title: 'Python 示例',
+                code: `<span class="code-comment"># 安装SDK</span>
+<span class="code-comment"># pip install openai</span>
+
+<span class="code-keyword">from</span> openai <span class="code-keyword">import</span> OpenAI
+
+<span class="code-comment"># 初始化客户端</span>
+client = OpenAI(
+    api_key=<span class="code-string">"YOUR_API_KEY"</span>,
+    base_url=<span class="code-string">"https://api.uiuiapi.com/v1"</span>  <span class="code-comment"># 使用我们的API地址</span>
+)
+
+<span class="code-comment"># 调用GPT-4</span>
+gpt_response = client.chat.completions.<span class="code-function">create</span>(
+    model=<span class="code-string">"gpt-4"</span>,
+    messages=[{<span class="code-string">"role"</span>: <span class="code-string">"user"</span>, <span class="code-string">"content"</span>: <span class="code-string">"解释量子计算"</span>}]
+)
+
+<span class="code-comment"># 无缝切换到Claude</span>
+claude_response = client.chat.completions.<span class="code-function">create</span>(
+    model=<span class="code-string">"claude-3-sonnet"</span>,
+    messages=[{<span class="code-string">"role"</span>: <span class="code-string">"user"</span>, <span class="code-string">"content"</span>: <span class="code-string">"写一首诗"</span>}]
+)`
+            },
+            java: {
+                title: 'Java 示例',
+                code: `<span class="code-comment">// 添加依赖</span>
+<span class="code-comment">// implementation 'com.theokanning.openai-gpt3-java:api:0.12.0'</span>
+
+<span class="code-keyword">import</span> com.theokanning.openai.completion.chat.ChatCompletionRequest;
+<span class="code-keyword">import</span> com.theokanning.openai.completion.chat.ChatMessage;
+<span class="code-keyword">import</span> com.theokanning.openai.service.OpenAiService;
+
+<span class="code-comment">// 初始化客户端</span>
+String token = <span class="code-string">"YOUR_API_KEY"</span>;
+OpenAiService service = <span class="code-keyword">new</span> <span class="code-function">OpenAiService</span>(token, <span class="code-string">"https://api.uiuiapi.com/v1"</span>);
+
+<span class="code-comment">// 创建消息</span>
+List<ChatMessage> messages = <span class="code-keyword">new</span> ArrayList<>();
+messages.<span class="code-function">add</span>(<span class="code-keyword">new</span> <span class="code-function">ChatMessage</span>(<span class="code-string">"user"</span>, <span class="code-string">"解释量子计算"</span>));
+
+<span class="code-comment">// 调用GPT-4</span>
+ChatCompletionRequest gptRequest = ChatCompletionRequest.<span class="code-function">builder</span>()
+    .<span class="code-function">model</span>(<span class="code-string">"gpt-4"</span>)
+    .<span class="code-function">messages</span>(messages)
+    .<span class="code-function">build</span>();
+service.<span class="code-function">createChatCompletion</span>(gptRequest);
+
+<span class="code-comment">// 切换到Claude只需更改模型</span>
+ChatCompletionRequest claudeRequest = ChatCompletionRequest.<span class="code-function">builder</span>()
+    .<span class="code-function">model</span>(<span class="code-string">"claude-3-sonnet"</span>)
+    .<span class="code-function">messages</span>(messages)
+    .<span class="code-function">build</span>();
+service.<span class="code-function">createChatCompletion</span>(claudeRequest);`
+            },
+            curl: {
+                title: 'cURL 示例',
+                code: `<span class="code-comment"># 调用GPT-4</span>
+curl -X POST https://api.uiuiapi.com/v1/chat/completions \\
+  -H <span class="code-string">"Authorization: Bearer YOUR_API_KEY"</span> \\
+  -H <span class="code-string">"Content-Type: application/json"</span> \\
+  -d '{
+    "model": <span class="code-string">"gpt-4"</span>,
+    "messages": [{
+      "role": <span class="code-string">"user"</span>,
+      "content": <span class="code-string">"解释量子计算"</span>
+    }]
+  }'
+
+<span class="code-comment"># 无缝切换到Claude</span>
+curl -X POST https://api.uiuiapi.com/v1/chat/completions \\
+  -H <span class="code-string">"Authorization: Bearer YOUR_API_KEY"</span> \\
+  -H <span class="code-string">"Content-Type: application/json"</span> \\
+  -d '{
+    "model": <span class="code-string">"claude-3-sonnet"</span>,
+    "messages": [{
+      "role": <span class="code-string">"user"</span>,
+      "content": <span class="code-string">"写一首诗"</span>
+    }]
+  }'`
+            }
+        };
+
+        // 代码示例标签切换
+        document.querySelectorAll('.example-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.example-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // 更新代码内容
+                const lang = tab.getAttribute('data-lang');
+                const example = codeExamples[lang];
+                
+                document.getElementById('codeExample').innerHTML = `
+                    <div class="example-header">
+                        <span class="example-title">${example.title}</span>
+                        <button class="copy-btn">复制代码</button>
+                    </div>
+                    <div class="example-code">
+                        <pre><code>${example.code}</code></pre>
+                    </div>
+                `;
+                
+                // 重新绑定复制功能
+                bindCopyButton();
+            });
+        });
+
+        // 复制代码功能
+        function bindCopyButton() {
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const codeBlock = btn.closest('.example-content').querySelector('pre');
+                    const textContent = codeBlock.textContent;
+                    
+                    try {
+                        await navigator.clipboard.writeText(textContent);
+                        const originalText = btn.textContent;
+                        btn.textContent = '已复制！';
+                        btn.style.background = 'rgba(34, 197, 94, 0.2)';
+                        
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.style.background = '';
+                        }, 2000);
+                    } catch (err) {
+                        console.error('复制失败:', err);
+                    }
+                });
+            });
+        }
+
+        // 初始化复制按钮
+        bindCopyButton();
+
+        // 添加滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const animationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 为需要动画的元素添加观察器
+        document.querySelectorAll('.feature-card, .pricing-card, .faq-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            animationObserver.observe(el);
+        });
+
+        // 添加打字机效果
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+
+        // 页面加载时的动画序列
+        window.addEventListener('DOMContentLoaded', () => {
+            // 可以在这里添加更多的初始化动画
+        });
+
+        // 添加鼠标跟随效果（可选）
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.floating-shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.02;
+                const xMove = (x - 0.5) * speed * 100;
+                const yMove = (y - 0.5) * speed * 100;
+                
+                shape.style.transform = `translate(${xMove}px, ${yMove}px)`;
+            });
+        });
+
+        // 性能优化：防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 优化滚动事件
+        const optimizedScroll = debounce(() => {
+            // 滚动相关的操作
+        }, 10);
+
+        window.addEventListener('scroll', optimizedScroll);
+
+        // 添加页面切换时的过渡效果
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                document.title = '回来看看 | UIUI API';
+            } else {
+                document.title = 'UIUI API - 下一代AI模型统一网关';
+            }
+        });
+
+        // 控制台欢迎信息
+        console.log(
+            '%c欢迎来到UIUI API！',
+            'color: #6366f1; font-size: 24px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);'
+        );
+        console.log(
+            '%c🚀 我们正在招聘优秀的工程师，快来加入我们吧！',
+            'color: #a78bfa; font-size: 16px;'
+        );
+        console.log('详情请访问: https://uiuiapi.com/careers');
+    </script>
+</body>
+</html>
